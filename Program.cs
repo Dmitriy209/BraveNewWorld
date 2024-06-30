@@ -146,13 +146,18 @@ namespace BraveNewWorld
         {
             int[] direction = { 0, 0 };
 
-            if (pressedKey.Key == ConsoleKey.UpArrow)
+            ConsoleKey keyUpArrow = ConsoleKey.UpArrow;
+            ConsoleKey keyDownArrow = ConsoleKey.DownArrow;
+            ConsoleKey keyLeftArrow = ConsoleKey.LeftArrow;
+            ConsoleKey keyRightArrow = ConsoleKey.RightArrow;
+
+            if (pressedKey.Key == keyUpArrow)
                 direction[1] -= 1;
-            else if (pressedKey.Key == ConsoleKey.DownArrow)
+            else if (pressedKey.Key == keyDownArrow)
                 direction[1] = 1;
-            else if (pressedKey.Key == ConsoleKey.LeftArrow)
+            else if (pressedKey.Key == keyLeftArrow)
                 direction[0] -= 1;
-            else if (pressedKey.Key == ConsoleKey.RightArrow)
+            else if (pressedKey.Key == keyRightArrow)
                 direction[0] = 1;
 
             return direction;
