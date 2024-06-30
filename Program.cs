@@ -268,7 +268,7 @@ namespace BraveNewWorld
         {
             char symbolEndGame = 'C';
 
-            return symbol == symbolEndGame;
+            return symbol != symbolEndGame;
         }
     }
 }
