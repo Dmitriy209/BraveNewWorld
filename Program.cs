@@ -22,9 +22,9 @@ namespace BraveNewWorld
 
             Console.CursorVisible = false;
 
-            bool TrySetStartPosition = FoundStartPosition(map, ref heroPositionX, ref heroPositionY);
+            bool isTrySetStartPosition = IsFoundStartPosition(map, ref heroPositionX, ref heroPositionY);
 
-            if (TrySetStartPosition == false)
+            if (isTrySetStartPosition == false)
             {
                 heroPositionX = startPositionX;
                 heroPositionY = startPositionY;
@@ -44,7 +44,7 @@ namespace BraveNewWorld
 
                 ShowMessage(map[nextHeroPositionX, nextHeroPositionY]);
 
-                isRunning = TryPlay(map[nextHeroPositionX, nextHeroPositionY]);
+                isRunning = IsEndGame(map[nextHeroPositionX, nextHeroPositionY]);
             }
 
             Console.WriteLine("Игра окончена.");
@@ -90,7 +90,7 @@ namespace BraveNewWorld
             return maxLength;
         }
 
-        private static bool FoundStartPosition(char[,] map, ref int heroPositionX, ref int heroPositionY)
+        private static bool IsFoundStartPosition(char[,] map, ref int heroPositionX, ref int heroPositionY)
         {
             char symbolStartPosition = 'S';
 
@@ -132,7 +132,6 @@ namespace BraveNewWorld
 
             nextHeroPositionX = heroPositionX + direction[0];
             nextHeroPositionY = heroPositionY + direction[1];
-
 
             switch (map[nextHeroPositionX, nextHeroPositionY])
             {
@@ -265,16 +264,11 @@ namespace BraveNewWorld
             Console.WriteLine(message);
         }
 
-        private static bool TryPlay(char symbol)
+        private static bool IsEndGame(char symbol)
         {
             char symbolEndGame = 'C';
 
-            bool isRunning = true;
-
-            if (symbol == symbolEndGame)
-               isRunning = false;
-
-            return isRunning;
+            return symbol == symbolEndGame;
         }
     }
 }
