@@ -15,15 +15,26 @@ namespace BraveNewWorld
             int heroPositionX = 0;
             int heroPositionY = 0;
 
+            int startPositionX = 1;
+            int startPositionY = 1;
+
+            string hero = "H";
+
             Console.CursorVisible = false;
 
-            FoundStartPosition(map, ref heroPositionX, ref heroPositionY);
+            bool TrySetStartPosition = FoundStartPosition(map, ref heroPositionX, ref heroPositionY);
+
+            if (TrySetStartPosition == false)
+            {
+                heroPositionX = startPositionX;
+                heroPositionY = startPositionY;
+            }
 
             while (isRunning)
             {
                 DrawMap(map);
 
-                DrawHero(ref heroPositionX, ref heroPositionY);
+                DrawHero(ref heroPositionX, ref heroPositionY, hero);
 
                 int nextHeroPositionX = 0;
                 int nextHeroPositionY = 0;
@@ -31,9 +42,9 @@ namespace BraveNewWorld
                 ConsoleKeyInfo pressedKey = Console.ReadKey();
                 MoveHero(pressedKey, ref heroPositionX, ref heroPositionY, map, ref nextHeroPositionX, ref nextHeroPositionY);
 
-                WriteMessage(map[nextHeroPositionX, nextHeroPositionY]);
+                ShowMessage(map[nextHeroPositionX, nextHeroPositionY]);
 
-                FinishTheGame(map[nextHeroPositionX, nextHeroPositionY], ref isRunning);
+                isRunning = TryPlay(map[nextHeroPositionX, nextHeroPositionY]);
             }
 
             Console.WriteLine("Игра окончена.");
@@ -41,7 +52,7 @@ namespace BraveNewWorld
 
         private static char[,] ReadMap(string path)
         {
-            string[] file = File.ReadAllLines("map.txt");
+            string[] file = File.ReadAllLines(path);
 
             char[,] map = new char[GetMaxLengthOfLine(file), file.Length];
 
@@ -79,17 +90,14 @@ namespace BraveNewWorld
             return maxLength;
         }
 
-        private static void FoundStartPosition(char[,] map, ref int heroPositionX, ref int heroPositionY)
+        private static bool FoundStartPosition(char[,] map, ref int heroPositionX, ref int heroPositionY)
         {
             char symbolStartPosition = 'S';
-
-            int startPositionX = 1;
-            int startPositionY = 1;
 
             int endCyclePositionX = map.GetLength(0) - 1;
             int endCyclePositionY = map.GetLength(1);
 
-            bool haveStartPosition = false;
+            bool TrySetStartPosition = false;
 
             for (int positionX = 1; positionX < endCyclePositionX; positionX++)
             {
@@ -100,19 +108,19 @@ namespace BraveNewWorld
                         heroPositionX = positionX;
                         heroPositionY = positionY;
 
-                        haveStartPosition = true;
-
                         positionX = endCyclePositionX;
                         positionY = endCyclePositionY;
+
+                        TrySetStartPosition = true;
+                    }
+                    else
+                    {
+                        TrySetStartPosition = false;
                     }
                 }
             }
 
-            if (haveStartPosition == false)
-            {
-                heroPositionX = startPositionX;
-                heroPositionY = startPositionY;
-            }
+            return TrySetStartPosition;
         }
 
         private static void MoveHero(ConsoleKeyInfo pressedKey, ref int heroPositionX, ref int heroPositionY, char[,] map, ref int nextHeroPositionX, ref int nextHeroPositionY)
@@ -169,7 +177,7 @@ namespace BraveNewWorld
             Console.Write(hero);
         }
 
-        private static void WriteMessage(char symbol)
+        private static void ShowMessage(char symbol)
         {
             const char Field = ' ';
             const char RoadVertical = '/';
@@ -233,11 +241,11 @@ namespace BraveNewWorld
                     break;
 
                 case BridgeLeft:
-                    message = "Вы в левой части моста, смотрите как река бежит на вас. Красиво.";
+                    message = "Вы в левой части моста, смотрите как река течёт на вас. Красиво.";
                     break;
 
                 case BridgeRight:
-                    message = "Вы в правой части моста, смотрите как река бежит от вас. Красиво. Рыбак вам машет рукой.";
+                    message = "Вы в правой части моста, смотрите как река течёт от вас. Красиво. Рыбак вам машет рукой.";
                     break;
 
                 case River:
@@ -257,12 +265,16 @@ namespace BraveNewWorld
             Console.WriteLine(message);
         }
 
-        private static void FinishTheGame(char symbol, ref bool isRunning)
+        private static bool TryPlay(char symbol)
         {
             char symbolEndGame = 'C';
 
+            bool isRunning = true;
+
             if (symbol == symbolEndGame)
-                isRunning = false;
+               isRunning = false;
+
+            return isRunning;
         }
     }
 }
