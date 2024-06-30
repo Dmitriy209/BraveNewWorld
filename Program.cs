@@ -25,8 +25,15 @@ namespace BraveNewWorld
 
                 DrawHero(ref heroPositionX, ref heroPositionY);
 
+                int nextHeroPositionX = 0;
+                int nextHeroPositionY = 0;
+
                 ConsoleKeyInfo pressedKey = Console.ReadKey();
-                MoveHero(pressedKey, ref heroPositionX, ref heroPositionY, map, ref isRunning);
+                MoveHero(pressedKey, ref heroPositionX, ref heroPositionY, map, ref nextHeroPositionX, ref nextHeroPositionY);
+
+                WriteMessage(map[nextHeroPositionX, nextHeroPositionY]);
+
+                FinishTheGame(map[nextHeroPositionX, nextHeroPositionY], ref isRunning);
             }
 
             Console.WriteLine("Игра окончена.");
@@ -93,8 +100,6 @@ namespace BraveNewWorld
                         heroPositionX = positionX;
                         heroPositionY = positionY;
 
-                        //Console.SetCursorPosition(positionX, positionY);
-
                         haveStartPosition = true;
 
                         positionX = endCyclePositionX;
@@ -107,37 +112,31 @@ namespace BraveNewWorld
             {
                 heroPositionX = startPositionX;
                 heroPositionY = startPositionY;
-
-                //Console.SetCursorPosition(heroPositionX, heroPositionY);
             }
         }
 
-        private static void MoveHero(ConsoleKeyInfo pressedKey, ref int heroPositionX, ref int heroPositionY, char[,] map, ref bool isRunning)
+        private static void MoveHero(ConsoleKeyInfo pressedKey, ref int heroPositionX, ref int heroPositionY, char[,] map, ref int nextHeroPositionX, ref int nextHeroPositionY)
         {
             const char River = '>';
             const char EndMap = '#';
 
             int[] direction = GetDirection(pressedKey);
 
-            int nextHeroPositionX = heroPositionX + direction[0];
-            int nextHeroPositionY = heroPositionY + direction[1];
+            nextHeroPositionX = heroPositionX + direction[0];
+            nextHeroPositionY = heroPositionY + direction[1];
 
 
             switch (map[nextHeroPositionX, nextHeroPositionY])
             {
                 case River:
-                    WriteMessage(River, ref isRunning);
                     break;
 
                 case EndMap:
-                    WriteMessage(EndMap, ref isRunning);
                     break;
 
                 default:
                     heroPositionX = nextHeroPositionX;
                     heroPositionY = nextHeroPositionY;
-
-                    WriteMessage(map[nextHeroPositionX, nextHeroPositionY], ref isRunning);
                     break;
             }
         }
@@ -170,7 +169,7 @@ namespace BraveNewWorld
             Console.Write(hero);
         }
 
-        private static void WriteMessage(char symbol, ref bool isRunning)
+        private static void WriteMessage(char symbol)
         {
             const char Field = ' ';
             const char RoadVertical = '/';
@@ -210,7 +209,7 @@ namespace BraveNewWorld
                     break;
 
                 case City:
-                    FinishTheGame(ref isRunning, ref message);
+                    message = "Вы дошли до города. На этом игра должна закончиться.";
                     break;
 
                 case Ally:
@@ -258,11 +257,12 @@ namespace BraveNewWorld
             Console.WriteLine(message);
         }
 
-        private static void FinishTheGame(ref bool isRunning, ref string message)
+        private static void FinishTheGame(char symbol, ref bool isRunning)
         {
-            message = "Вы дошли до города. На этом игра должна закончиться.";
-            
-            isRunning = false;
+            char symbolEndGame = 'C';
+
+            if (symbol == symbolEndGame)
+                isRunning = false;
         }
     }
 }
